@@ -1,0 +1,32 @@
+/* StudentList.css */
+.student-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+  
+  .student-table th, .student-table td {
+    border: 1px solid #ddd; /* Bordures autour des cellules */
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .student-table th {
+    background-color: #f4f4f4; /* Couleur de fond pour l'en-tête */
+  }
+  
+  .student-table tr:hover {
+    background-color: #f1f1f1; /* Couleur de fond au survol des lignes */
+  }
+  
+  .student-table td button {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .student-table td button:hover {
+    background-color: #45a049; /* Effet au survol du bouton */
+  }

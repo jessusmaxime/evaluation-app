@@ -1,0 +1,180 @@
+/* src/styles.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+  }
+  
+  h1, h2 {
+    color: #333;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .import-section,
+  .selection-section,
+  .evaluation-section,
+  .description-section {
+    margin-bottom: 30px;
+  }
+  
+  input[type="file"] {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  li {
+    background-color: #e0e0e0;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  .competence-list {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .evaluation-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .evaluation-table th,
+  .evaluation-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .evaluation-table th {
+    background-color: #f2f2f2;
+  }
+  
+  .slider-container {
+    width: 150px;
+    margin: 0 auto;
+  }
+  
+  .scale {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 12px;
+  }
+  
+  .scale span {
+    width: 25%;
+    text-align: center;
+  }
+  
+  .scale .red {
+    color: red;
+  }
+  
+  .scale .orange {
+    color: orange;
+  }
+  
+  .scale .lightgreen {
+    color: lightgreen;
+  }
+  
+  .scale .darkgreen {
+    color: darkgreen;
+  }
+  
+  /* Styles spécifiques pour StudentList et EvaluationTable */
+  
+  .evaluation-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .evaluation-table button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .custom-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 10px;
+    background: linear-gradient(
+      to right,
+      #c8c8c8 0%,
+      red 0%,
+      red 25%,
+      orange 25%,
+      orange 50%,
+      lightgreen 50%,   /* Remplace le jaune par du vert clair */
+      lightgreen 75%,
+      darkgreen 75%,    /* Remplace le vert par du vert foncé */
+      darkgreen 100%
+    );
+        outline: none;
+    opacity: 0.8;
+  }
+  
+  .custom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #4B4B4B;
+    cursor: pointer;
+  }
+  
+  .custom-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #4B4B4B;
+    cursor: pointer;
+  }
+  
+  @media (max-width: 768px) {
+    .custom-slider {
+      height: 12px;
+      width: calc(100% - 5px); /* Remplissage presque complet de la cellule */
+      margin: 0 1px; /* Ajout de marges pour éviter que le curseur touche les bords */
+    }
+    .custom-slider::-webkit-slider-thumb,
+    .custom-slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+    }
+  }

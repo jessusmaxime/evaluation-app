@@ -1,0 +1,11 @@
+
+/* Responsive styles for tables */
+@media (max-width: 768px) {
+  .responsive-table th, .responsive-table td {
+    padding: 8px;
+    font-size: 14px;
+  }
+  .custom-slider {
+    height: 6px;
+  }
+}

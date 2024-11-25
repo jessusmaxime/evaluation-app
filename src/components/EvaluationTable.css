@@ -1,0 +1,11 @@
+/* EvaluationTable.css */
+
+/* Personnalisez les styles des curseurs si nécessaire */
+.rc-slider-track {
+    background-color: #4caf50 !important;
+  }
+  
+  .rc-slider-handle {
+    border: solid 2px #4caf50 !important;
+  }
+  
