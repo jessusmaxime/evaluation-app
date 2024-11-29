@@ -5,6 +5,10 @@ import { AppContext } from '../context/AppContext';
 import Papa from 'papaparse';
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
+import jschardet from 'jschardet';
+import { decode } from 'iconv-lite';
+import { detect } from 'jschardet';
+
 
 function Home() {
   const {
@@ -88,72 +92,117 @@ const handleFileSelection = (event) => {
 };
 
 
-// Fonction pour importer les élèves avec vérification stricte de conformité
+
+const handleFileUpload = (file, callback) => {
+  const reader = new FileReader();
+
+  reader.onload = (event) => {
+    const arrayBuffer = event.target.result;
+    const uint8Array = new Uint8Array(arrayBuffer);
+
+    // Convertir Uint8Array en chaîne de caractères brute pour jschardet
+    const binaryString = Array.from(uint8Array)
+      .map((byte) => String.fromCharCode(byte))
+      .join('');
+
+    // Détecter l'encodage
+    const detected = detect(binaryString);
+    const encoding = detected.encoding || 'utf-8'; // Utiliser UTF-8 par défaut
+    console.log(`Encodage détecté : ${encoding}`);
+
+    try {
+      // Décoder le contenu en utilisant iconv-lite
+      const textContent = decode(uint8Array, encoding);
+
+      // Passer le contenu décodé à la fonction de traitement
+      callback(textContent);
+    } catch (error) {
+      alert('Erreur : Impossible de décoder le fichier. Veuillez vérifier son encodage.');
+      console.error('Erreur lors de la conversion d’encodage :', error);
+    }
+  };
+
+  reader.onerror = () => {
+    alert('Erreur lors de la lecture du fichier.');
+  };
+
+  reader.readAsArrayBuffer(file); // Lire le fichier comme ArrayBuffer
+};
+
+
+// Fonction pour importer les élèves
 const handleElevesUpload = (file) => {
-  Papa.parse(file, {
-    header: true,
-    skipEmptyLines: true,
-    complete: (result) => {
-      const headers = result.meta.fields;
+  handleFileUpload(file, (csvContent) => {
+    Papa.parse(csvContent, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (result) => {
+        const headers = result.meta.fields;
 
-      // Vérifier que seules les colonnes "Nom" et "Prénom" sont présentes
-      const requiredHeaders = ['Nom', 'Prénom'];
-      const extraHeaders = headers.filter(header => !requiredHeaders.includes(header));
+        // Valider les colonnes
+        const requiredHeaders = ['Nom', 'Prénom'];
+        const extraHeaders = headers.filter((header) => !requiredHeaders.includes(header));
 
-      if (extraHeaders.length > 0) {
-        alert("Erreur : Le fichier des élèves doit contenir uniquement les colonnes 'Nom' et 'Prénom'. Colonnes supplémentaires détectées : " + extraHeaders.join(', '));
-        return;
-      }
+        if (extraHeaders.length > 0) {
+          alert(
+            `Erreur : Le fichier des élèves doit contenir uniquement les colonnes 'Nom' et 'Prénom'. Colonnes supplémentaires détectées : ${extraHeaders.join(', ')}`
+          );
+          return;
+        }
 
-      if (!headers.includes('Nom') || !headers.includes('Prénom')) {
-        alert("Erreur : Le fichier des élèves doit contenir les colonnes 'Nom' et 'Prénom'.");
-        return;
-      }
+        if (!headers.includes('Nom') || !headers.includes('Prénom')) {
+          alert("Erreur : Le fichier des élèves doit contenir les colonnes 'Nom' et 'Prénom'.");
+          return;
+        }
 
-      const data = result.data.map(student => ({
-        id: uuidv4(),
-        Prénom: student.Prénom,
-        Nom: student.Nom
-      }));
-      console.log('Étudiants importés:', data); 
-      setStudents(data);
-    },
-    error: (error) => {
-      alert("Erreur lors de l'importation des élèves : " + error.message);
-    },
+        const data = result.data.map((student) => ({
+          id: uuidv4(),
+          Prénom: student.Prénom,
+          Nom: student.Nom,
+        }));
+        console.log('Étudiants importés:', data);
+        setStudents(data);
+      },
+      error: (error) => {
+        alert(`Erreur lors de l'importation des élèves : ${error.message}`);
+      },
+    });
   });
 };
 
-// Fonction pour importer les compétences avec "Compétence" obligatoire et "Sous-compétence" optionnelle
+// Fonction pour importer les compétences
 const handleCompetencesUpload = (file) => {
-  Papa.parse(file, {
-    header: true,
-    skipEmptyLines: true,
-    complete: (results) => {
-      const headers = results.meta.fields;
+  handleFileUpload(file, (csvContent) => {
+    Papa.parse(csvContent, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        const headers = results.meta.fields;
 
-      // Vérifier que "Compétence" est présente et que les seules colonnes sont "Compétence" et, éventuellement, "Sous-compétence"
-      if (!headers.includes('Compétence')) {
-        alert("Erreur : Le fichier de compétences doit contenir une colonne 'Compétence'.");
-        return;
-      }
+        // Valider les colonnes
+        if (!headers.includes('Compétence')) {
+          alert("Erreur : Le fichier de compétences doit contenir une colonne 'Compétence'.");
+          return;
+        }
 
-      const allowedHeaders = ['Compétence', 'Sous-compétence'];
-      const extraHeaders = headers.filter(header => !allowedHeaders.includes(header));
+        const allowedHeaders = ['Compétence', 'Sous-compétence'];
+        const extraHeaders = headers.filter((header) => !allowedHeaders.includes(header));
 
-      if (extraHeaders.length > 0) {
-        alert("Erreur : Le fichier de compétences doit contenir uniquement les colonnes 'Compétence' et, éventuellement, 'Sous-compétence'. Colonnes supplémentaires détectées : " + extraHeaders.join(', '));
-        return;
-      }
+        if (extraHeaders.length > 0) {
+          alert(
+            `Erreur : Le fichier de compétences doit contenir uniquement les colonnes 'Compétence' et, éventuellement, 'Sous-compétence'. Colonnes supplémentaires détectées : ${extraHeaders.join(', ')}`
+          );
+          return;
+        }
 
-      processCompetencesData(results.data);
-    },
-    error: (error) => {
-      alert("Erreur lors de l'importation des compétences : " + error.message);
-    },
+        processCompetencesData(results.data);
+      },
+      error: (error) => {
+        alert(`Erreur lors de l'importation des compétences : ${error.message}`);
+      },
+    });
   });
 };
-
 const handleImportResults = (file) => {
   const fileName = file.name.split('.').slice(0, -1).join('.'); // Extraire le nom du fichier sans extension
 
@@ -284,12 +333,12 @@ Martin,Marie`}
 
         <div>
           <h4>Format du fichier Compétences.CSV </h4>
-          <p>Colonnes requises : <strong>Compétence</strong>, <strong>Sous-compétence</strong> (optionnel)</p>
+          <p>Colonnes requises : <strong>Compétence</strong>, <strong>Sous-compétence</strong></p>
           <pre>
             {`Compétence,Sous-compétence
 Mathématiques,Algèbre
 Mathématiques,Géométrie
-Sciences,`}
+Sciences,Sciences`}
           </pre>
         </div>
       </div>
